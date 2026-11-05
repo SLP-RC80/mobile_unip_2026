@@ -1,0 +1,315 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const UnipMobileApp());
+}
+
+class UnipMobileApp extends StatelessWidget {
+  const UnipMobileApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'UNIP Mobile 2026',
+      debugShowCheckedModeBanner: false,
+      home: LoginPage(),
+    );
+  }
+}
+
+// RELATÓRIO 3: tela de login demonstrativo.
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  String email = '';
+  String senha = '';
+  String mensagem = '';
+
+  void realizarLogin() {
+    setState(() {
+      if (email.trim().isEmpty || senha.isEmpty) {
+        mensagem = 'Preencha o e-mail e a senha.';
+      } else {
+        mensagem = 'Bem-vindo(a), ${email.trim()}!';
+      }
+    });
+  }
+
+  void abrirVerificador() {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => const VerificadorSenhaPage(),
+      ),
+    );
+  }
+
+  InputDecoration campo(String dica) {
+    return InputDecoration(
+      hintText: dica,
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFFD5DCE5)),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 360),
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF2F5F9),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFFD5DCE5)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Center(
+                    child: Icon(
+                      Icons.phone_android,
+                      size: 36,
+                      color: Color(0xFF1D5D95),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  const Center(
+                    child: Text(
+                      'Acesso ao Sistema',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF183F5F),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Center(child: Text('UNIP Mobile 2026')),
+                  const SizedBox(height: 36),
+                  const Text('E-mail'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: campo('Digite seu e-mail'),
+                    onChanged: (valor) {
+                      email = valor;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Senha'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    obscureText: true,
+                    decoration: campo('Digite sua senha'),
+                    onChanged: (valor) {
+                      senha = valor;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: realizarLogin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1D5D95),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'LOGIN',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: OutlinedButton.icon(
+                      onPressed: abrirVerificador,
+                      icon: const Icon(Icons.shield_outlined),
+                      label: const Text('VERIFICAR SENHA'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF1D5D95),
+                        side: const BorderSide(color: Color(0xFF1D5D95)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (mensagem.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Text(
+                        mensagem,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF183F5F),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// RELATÓRIO 8: verificador didático de comprimento da senha.
+class VerificadorSenhaPage extends StatefulWidget {
+  const VerificadorSenhaPage({super.key});
+
+  @override
+  State<VerificadorSenhaPage> createState() => _VerificadorSenhaPageState();
+}
+
+class _VerificadorSenhaPageState extends State<VerificadorSenhaPage> {
+  String senha = '';
+
+  String get classificacao {
+    if (senha.isEmpty) return 'Digite uma senha para analisar.';
+    if (senha.length < 6) return 'Senha Fraca';
+    if (senha.length < 10) return 'Senha Média';
+    return 'Senha Forte';
+  }
+
+  Color get corResultado {
+    if (senha.isEmpty) return const Color(0xFF666666);
+    if (senha.length < 6) return const Color(0xFFC62828);
+    if (senha.length < 10) return const Color(0xFFB65F00);
+    return const Color(0xFF237A3B);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Verificador de Senha'),
+        foregroundColor: const Color(0xFF183F5F),
+        backgroundColor: Colors.white,
+      ),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 360),
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF2F5F9),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFFD5DCE5)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(
+                    Icons.shield_outlined,
+                    size: 42,
+                    color: Color(0xFF1D5D95),
+                  ),
+                  const SizedBox(height: 18),
+                  const Text(
+                    'Verificador de Senha',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF183F5F),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'UNIP Mobile 2026',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 36),
+                  const Text('Digite uma senha:'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    onChanged: (valor) {
+                      setState(() {
+                        senha = valor;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Digite sua senha',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFD5DCE5),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    classificacao,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: corResultado,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Quantidade de caracteres: ${senha.length}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Color(0xFF40566B)),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Classificação didática baseada apenas no comprimento.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF666666),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
